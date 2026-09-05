@@ -57,11 +57,16 @@ function AdminCustomers() {
             {(customers.data ?? []).map((c) => (
               <tr key={c.id} className="border-b border-border/40 last:border-0">
                 <td className="p-4">
-                  <div className="flex items-center gap-2">
+                  {c.isAdmin ? (
+                    <span className="relative inline-flex items-center overflow-hidden rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.18)] backdrop-blur-sm">
+                      <span className="pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-primary/25 to-transparent" />
+                      <span className="relative">{c.full_name ?? "—"}</span>
+                    </span>
+                  ) : (
                     <span>{c.full_name ?? "—"}</span>
-                    {c.isAdmin ? <Badge>Admin</Badge> : null}
-                  </div>
+                  )}
                 </td>
+
                 <td className="p-4">{c.email ?? "—"}</td>
                 <td className="p-4">{c.phone ?? "—"}</td>
                 <td className="p-4 text-muted-foreground">

@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { formatPrice, orderQuery } from "@/lib/store";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/orders/$orderId")({
   head: () => ({
@@ -32,6 +33,18 @@ type Address = {
 function OrderDetailPage() {
   const { orderId } = Route.useParams();
   const order = useQuery(orderQuery(orderId));
+  const invoice = useQuery({
+    queryKey: ["invoice", orderId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("invoices")
+        .select("id, number, total, currency, issued_at")
+        .eq("order_id", orderId)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
 
   if (order.isLoading) {
     return <div className="mx-auto max-w-3xl px-5 py-24 text-sm text-muted-foreground">Loading…</div>;

@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { formatPrice, orderQuery } from "@/lib/store";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/orders/$orderId")({
   head: () => ({
@@ -32,6 +33,18 @@ type Address = {
 function OrderDetailPage() {
   const { orderId } = Route.useParams();
   const order = useQuery(orderQuery(orderId));
+  const invoice = useQuery({
+    queryKey: ["invoice", orderId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("invoices")
+        .select("id, number, total, currency, issued_at")
+        .eq("order_id", orderId)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
 
   if (order.isLoading) {
     return <div className="mx-auto max-w-3xl px-5 py-24 text-sm text-muted-foreground">Loading…</div>;
@@ -129,6 +142,23 @@ function OrderDetailPage() {
           {o.notes && <p className="mt-3 text-muted-foreground">Notes: {o.notes}</p>}
         </div>
       </section>
+
+      {invoice.data && (
+        <section className="mt-6 rounded-lg border border-border/60 bg-card p-6 text-sm">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h2 className="text-xl">Invoice {invoice.data.number}</h2>
+              <p className="mt-2 text-muted-foreground">
+                Issued {new Date(invoice.data.issued_at).toLocaleDateString()} ·{" "}
+                {formatPrice(Number(invoice.data.total), invoice.data.currency)}
+              </p>
+            </div>
+            <Button variant="outline" onClick={() => window.print()}>
+              Print / save PDF
+            </Button>
+          </div>
+        </section>
+      )}
     </div>
   );
 }

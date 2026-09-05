@@ -49,6 +49,24 @@ export function SiteFooter() {
               </Link>
             </li>
           </ul>
+          <p className="eyebrow mt-8">Legal</p>
+          <ul className="mt-4 space-y-2 text-muted-foreground">
+            <li>
+              <Link to="/terms" className="hover:text-foreground">
+                Terms of service
+              </Link>
+            </li>
+            <li>
+              <Link to="/privacy" className="hover:text-foreground">
+                Privacy policy
+              </Link>
+            </li>
+            <li>
+              <Link to="/refunds" className="hover:text-foreground">
+                Refund policy
+              </Link>
+            </li>
+          </ul>
         </div>
       </div>
       <div className="border-t border-border/70 py-6 text-center text-xs text-muted-foreground">

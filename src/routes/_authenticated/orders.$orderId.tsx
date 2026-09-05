@@ -142,6 +142,23 @@ function OrderDetailPage() {
           {o.notes && <p className="mt-3 text-muted-foreground">Notes: {o.notes}</p>}
         </div>
       </section>
+
+      {invoice.data && (
+        <section className="mt-6 rounded-lg border border-border/60 bg-card p-6 text-sm">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h2 className="text-xl">Invoice {invoice.data.number}</h2>
+              <p className="mt-2 text-muted-foreground">
+                Issued {new Date(invoice.data.issued_at).toLocaleDateString()} ·{" "}
+                {formatPrice(Number(invoice.data.total), invoice.data.currency)}
+              </p>
+            </div>
+            <Button variant="outline" onClick={() => window.print()}>
+              Print / save PDF
+            </Button>
+          </div>
+        </section>
+      )}
     </div>
   );
 }

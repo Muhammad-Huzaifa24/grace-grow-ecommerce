@@ -135,7 +135,7 @@ function EditProduct() {
       } else {
         const { error } = await supabase
           .from("product_variants")
-          .insert({ product_id: productId, ...(v.values as TablesInsert<"product_variants">) });
+          .insert({ ...(v.values as TablesInsert<"product_variants">), product_id: productId });
         if (error) throw error;
       }
     },

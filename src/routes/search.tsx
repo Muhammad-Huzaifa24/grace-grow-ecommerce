@@ -5,14 +5,19 @@ import { ProductBrowser } from "@/components/product-browser";
 import { categoriesQuery, productsQuery } from "@/lib/store";
 import { Input } from "@/components/ui/input";
 
-type SearchParams = { q?: string; category?: string; sort?: string; inStock?: boolean };
+type SearchParams = {
+  q?: string | undefined;
+  category?: string | undefined;
+  sort?: string | undefined;
+  inStock?: boolean | undefined;
+};
 
 export const Route = createFileRoute("/search")({
   validateSearch: (search: Record<string, unknown>): SearchParams => ({
-    q: typeof search.q === "string" ? search.q : undefined,
-    category: typeof search.category === "string" ? search.category : undefined,
-    sort: typeof search.sort === "string" ? search.sort : undefined,
-    inStock: search.inStock === true || search.inStock === "true" ? true : undefined,
+    q: typeof search['q'] === "string" ? search['q'] : undefined,
+    category: typeof search['category'] === "string" ? search['category'] : undefined,
+    sort: typeof search['sort'] === "string" ? search['sort'] : undefined,
+    inStock: search['inStock'] === true || search['inStock'] === "true" ? true : undefined,
   }),
   head: () => ({
     meta: [

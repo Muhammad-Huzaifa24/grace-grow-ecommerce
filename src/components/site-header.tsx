@@ -85,9 +85,15 @@ export function SiteHeader() {
             </Link>
           </Button>
           <Button asChild variant="ghost" size="icon" aria-label="Account">
-            <Link to={user ? "/account" : "/auth"} search={user ? undefined : { redirect: "/account" }}>
-              <User className="size-5" />
-            </Link>
+            {user ? (
+              <Link to="/account">
+                <User className="size-5" />
+              </Link>
+            ) : (
+              <Link to="/auth" search={{ redirect: "/account" }}>
+                <User className="size-5" />
+              </Link>
+            )}
           </Button>
           <Button asChild variant="ghost" size="icon" aria-label="Cart" className="relative">
             <Link to="/cart">

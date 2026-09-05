@@ -4,6 +4,8 @@ import { Menu, Search, ShoppingBag, User } from "lucide-react";
 import { useCart } from "@/lib/cart";
 import { useSession } from "@/lib/use-session";
 import { useIsAdmin } from "@/lib/admin";
+import { ThemeToggle } from "@/lib/theme";
+import { NotificationBell } from "@/components/notification-bell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -96,6 +98,8 @@ export function SiteHeader() {
               <Search className="size-5" />
             </Link>
           </Button>
+          <ThemeToggle />
+          <NotificationBell />
           <Button asChild variant="ghost" size="icon" aria-label="Account">
             {user ? (
               <Link to="/account">

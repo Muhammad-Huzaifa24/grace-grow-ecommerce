@@ -3,6 +3,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { Menu, Search, ShoppingBag, User } from "lucide-react";
 import { useCart } from "@/lib/cart";
 import { useSession } from "@/lib/use-session";
+import { useIsAdmin } from "@/lib/admin";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -15,6 +16,7 @@ const NAV = [
 export function SiteHeader() {
   const { count } = useCart();
   const { user } = useSession();
+  const { isAdmin } = useIsAdmin();
   const navigate = useNavigate();
   const [term, setTerm] = React.useState("");
   const [open, setOpen] = React.useState(false);
@@ -44,6 +46,11 @@ export function SiteHeader() {
               <Link to="/account" onClick={() => setOpen(false)}>
                 Account
               </Link>
+              {isAdmin && (
+                <Link to="/admin" onClick={() => setOpen(false)}>
+                  Admin
+                </Link>
+              )}
             </nav>
           </SheetContent>
         </Sheet>
@@ -63,6 +70,11 @@ export function SiteHeader() {
               {item.label}
             </Link>
           ))}
+          {isAdmin && (
+            <Link to="/admin" activeProps={{ className: "text-foreground" }} className="transition-colors hover:text-foreground">
+              Admin
+            </Link>
+          )}
         </nav>
 
         <form onSubmit={submit} className="ml-auto hidden w-56 items-center lg:flex">

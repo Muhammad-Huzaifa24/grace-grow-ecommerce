@@ -69,7 +69,7 @@ export function NotificationBell() {
   function openNotification(n: Notification) {
     if (!n.is_read) void markRead([n.id]);
     setOpen(false);
-    if (n.link) navigate({ href: n.link });
+    if (n.link) router.history.push(n.link);
   }
 
   return (

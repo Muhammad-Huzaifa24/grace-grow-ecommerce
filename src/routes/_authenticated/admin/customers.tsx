@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Badge } from "@/components/ui/badge";
 
 export const Route = createFileRoute("/_authenticated/admin/customers")({
   head: () => ({
@@ -18,12 +19,21 @@ function AdminCustomers() {
   const customers = useQuery({
     queryKey: ["admin", "customers"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("id,full_name,email,phone,created_at")
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return data ?? [];
+      const [profilesResult, rolesResult] = await Promise.all([
+        supabase
+          .from("profiles")
+          .select("id,full_name,email,phone,created_at")
+          .order("created_at", { ascending: false }),
+        supabase.from("user_roles").select("user_id,role").eq("role", "admin"),
+      ]);
+      if (profilesResult.error) throw profilesResult.error;
+      if (rolesResult.error) throw rolesResult.error;
+
+      const adminIds = new Set((rolesResult.data ?? []).map((role) => role.user_id));
+      return (profilesResult.data ?? []).map((profile) => ({
+        ...profile,
+        isAdmin: adminIds.has(profile.id),
+      }));
     },
   });
 
@@ -46,7 +56,12 @@ function AdminCustomers() {
           <tbody>
             {(customers.data ?? []).map((c) => (
               <tr key={c.id} className="border-b border-border/40 last:border-0">
-                <td className="p-4">{c.full_name ?? "—"}</td>
+                <td className="p-4">
+                  <div className="flex items-center gap-2">
+                    <span>{c.full_name ?? "—"}</span>
+                    {c.isAdmin ? <Badge>Admin</Badge> : null}
+                  </div>
+                </td>
                 <td className="p-4">{c.email ?? "—"}</td>
                 <td className="p-4">{c.phone ?? "—"}</td>
                 <td className="p-4 text-muted-foreground">

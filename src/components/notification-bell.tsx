@@ -20,7 +20,7 @@ type Notification = {
 export function NotificationBell() {
   const { user } = useSession();
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
+  const router = useRouter();
   const [open, setOpen] = React.useState(false);
 
   const { data: notifications = [] } = useQuery({

@@ -20,7 +20,7 @@ function AdminDashboard() {
     queryKey: ["admin", "stats"],
     queryFn: async () => {
       const [products, orders, customers] = await Promise.all([
-        supabase.from("products").select("id,is_active,stock"),
+        supabase.from("products").select("id,name,is_active,stock"),
         supabase.from("orders").select("id,order_number,total,status,created_at").order("created_at", { ascending: false }),
         supabase.from("profiles").select("id"),
       ]);
@@ -87,7 +87,7 @@ function AdminDashboard() {
           {(d?.products ?? [])
             .filter((p) => p.stock <= 5)
             .map((p) => (
-              <li key={p.id}>{p.id.slice(0, 8)} · {p.stock} left</li>
+              <li key={p.id}>{p.name} · {p.stock} left</li>
             ))}
         </ul>
       </section>

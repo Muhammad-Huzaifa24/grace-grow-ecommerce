@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import type { TablesInsert, TablesUpdate } from "@/integrations/supabase/types";
 import { slugify } from "@/lib/admin";
 import { Button } from "@/components/ui/button";
+import { ConfirmButton } from "@/components/confirm-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -240,7 +241,7 @@ function EditProduct() {
             <Label htmlFor="featured">Featured</Label>
           </div>
         </div>
-        <Button type="submit" disabled={save.isPending}>
+        <Button type="submit" variant="success" disabled={save.isPending}>
           Save product
         </Button>
       </form>
@@ -254,9 +255,13 @@ function EditProduct() {
             .map((img) => (
               <div key={img.id} className="space-y-2">
                 <img src={img.url} alt={img.alt ?? p.name} className="aspect-square w-full rounded-sm object-cover" />
-                <Button variant="ghost" size="sm" onClick={() => removeImage.mutate(img.id)}>
-                  Remove
-                </Button>
+                <ConfirmButton
+                  label="Remove"
+                  title="Remove this image?"
+                  description="The image is detached from this product."
+                  confirmLabel="Remove"
+                  onConfirm={() => removeImage.mutate(img.id)}
+                />
               </div>
             ))}
         </div>
@@ -308,12 +313,15 @@ function EditProduct() {
               <Input name="price" type="number" step="0.01" defaultValue={v.price === null ? "" : String(v.price)} placeholder="Price" />
               <Input name="stock" type="number" defaultValue={String(v.stock)} placeholder="Stock" />
               <div className="flex gap-2">
-                <Button type="submit" size="sm" variant="outline">
+                <Button type="submit" size="sm" variant="success">
                   Save
                 </Button>
-                <Button type="button" size="sm" variant="ghost" onClick={() => removeVariant.mutate(v.id)}>
-                  Delete
-                </Button>
+                <ConfirmButton
+                  label="Delete"
+                  title={`Delete variant ${v.name}?`}
+                  description="This permanently removes the variant."
+                  onConfirm={() => removeVariant.mutate(v.id)}
+                />
               </div>
             </form>
           ))}

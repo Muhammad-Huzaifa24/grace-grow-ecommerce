@@ -86,36 +86,42 @@ function AdminOrders() {
             </ul>
 
             <div className="mt-5 grid gap-4 sm:grid-cols-2 sm:max-w-md">
-              <Select
-                value={o.status}
-                onValueChange={(v) => update.mutate({ id: o.id, patch: { status: v as OrderStatus } })}
-              >
-                <SelectTrigger aria-label="Order status">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {ORDER_STATUSES.map((s) => (
-                    <SelectItem key={s} value={s}>
-                      {s}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Select
-                value={o.payment_status}
-                onValueChange={(v) => update.mutate({ id: o.id, patch: { payment_status: v as PaymentStatus } })}
-              >
-                <SelectTrigger aria-label="Payment status">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {PAYMENT_STATUSES.map((s) => (
-                    <SelectItem key={s} value={s}>
-                      {s}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="space-y-1.5">
+                <span className="text-xs uppercase tracking-[0.15em] text-muted-foreground">Fulfilment status</span>
+                <Select
+                  value={o.status}
+                  onValueChange={(v) => update.mutate({ id: o.id, patch: { status: v as OrderStatus } })}
+                >
+                  <SelectTrigger aria-label="Fulfilment status">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {ORDER_STATUSES.map((s) => (
+                      <SelectItem key={s} value={s}>
+                        {s}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
+                <span className="text-xs uppercase tracking-[0.15em] text-muted-foreground">Payment status</span>
+                <Select
+                  value={o.payment_status}
+                  onValueChange={(v) => update.mutate({ id: o.id, patch: { payment_status: v as PaymentStatus } })}
+                >
+                  <SelectTrigger aria-label="Payment status">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {PAYMENT_STATUSES.map((s) => (
+                      <SelectItem key={s} value={s}>
+                        {s}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
         ))}

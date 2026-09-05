@@ -96,7 +96,7 @@ function AccountPage() {
           <Label htmlFor="phone">Phone</Label>
           <Input id="phone" name="phone" defaultValue={profile.data?.phone ?? ""} key={profile.data?.phone} />
         </div>
-        <Button type="submit" disabled={saving}>
+        <Button type="submit" variant="success" disabled={saving}>
           Save changes
         </Button>
       </form>

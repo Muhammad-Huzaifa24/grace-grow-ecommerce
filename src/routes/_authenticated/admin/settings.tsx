@@ -110,7 +110,7 @@ function AdminSettings() {
           />
         </div>
         <div className="sm:col-span-2">
-          <Button type="submit" disabled={save.isPending}>
+          <Button type="submit" variant="success" disabled={save.isPending}>
             Save settings
           </Button>
         </div>

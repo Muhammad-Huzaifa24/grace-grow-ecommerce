@@ -7,6 +7,7 @@ import type { TablesUpdate } from "@/integrations/supabase/types";
 import { formatPrice } from "@/lib/store";
 import { slugify } from "@/lib/admin";
 import { Button } from "@/components/ui/button";
+import { ConfirmButton } from "@/components/confirm-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -166,15 +167,12 @@ function AdminProducts() {
                   />
                 </td>
                 <td className="p-4 text-right">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => {
-                      if (confirm(`Delete ${p.name}?`)) remove.mutate(p.id);
-                    }}
-                  >
-                    Delete
-                  </Button>
+                  <ConfirmButton
+                    label="Delete"
+                    title={`Delete ${p.name}?`}
+                    description="This permanently removes the product, its images and variants."
+                    onConfirm={() => remove.mutate(p.id)}
+                  />
                 </td>
               </tr>
             ))}

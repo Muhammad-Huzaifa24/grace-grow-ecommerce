@@ -6,6 +6,7 @@ import type { TablesInsert, TablesUpdate } from "@/integrations/supabase/types";
 import { slugify } from "@/lib/admin";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { ConfirmButton } from "@/components/confirm-button";
 
 export const Route = createFileRoute("/_authenticated/admin/categories")({
   head: () => ({
@@ -18,6 +19,8 @@ export const Route = createFileRoute("/_authenticated/admin/categories")({
   }),
   component: AdminCategories,
 });
+
+const rowGrid = "grid gap-3 sm:grid-cols-[1fr_1fr_2fr_6rem_10rem]";
 
 function AdminCategories() {
   const qc = useQueryClient();
@@ -71,73 +74,81 @@ function AdminCategories() {
     <div className="space-y-8">
       <h1 className="text-4xl">Categories</h1>
 
-      <div className="space-y-4 rounded-sm border border-border/60 bg-card p-6">
-        {(list.data ?? []).map((c) => (
+      <div className="overflow-x-auto rounded-sm border border-border/60 bg-card">
+        <div className="min-w-[820px]">
+          <div className={`${rowGrid} border-b border-border/60 p-4 text-xs uppercase tracking-[0.15em] text-muted-foreground`}>
+            <span>Name</span>
+            <span>Slug</span>
+            <span>Description</span>
+            <span>Position</span>
+            <span className="text-right">Actions</span>
+          </div>
+
+          {(list.data ?? []).map((c) => (
+            <form
+              key={c.id}
+              onSubmit={(e) => {
+                e.preventDefault();
+                const form = new FormData(e.currentTarget);
+                const name = String(form.get("name") ?? "");
+                upsert.mutate({
+                  id: c.id,
+                  values: {
+                    name,
+                    slug: slugify(String(form.get("slug") ?? "") || name),
+                    description: String(form.get("description") ?? "") || null,
+                    position: Number(form.get("position") ?? 0),
+                  },
+                });
+              }}
+              className={`${rowGrid} items-center border-b border-border/40 p-4 last:border-0`}
+            >
+              <Input name="name" defaultValue={c.name} placeholder="Name" />
+              <Input name="slug" defaultValue={c.slug} placeholder="Slug" />
+              <Input name="description" defaultValue={c.description ?? ""} placeholder="Description" />
+              <Input name="position" type="number" defaultValue={String(c.position)} placeholder="Position" />
+              <div className="flex justify-end gap-2">
+                <Button type="submit" size="sm" variant="success">
+                  Save
+                </Button>
+                <ConfirmButton
+                  label="Delete"
+                  title={`Delete ${c.name}?`}
+                  description="This permanently removes the category. Products in it become uncategorised."
+                  onConfirm={() => remove.mutate(c.id)}
+                />
+              </div>
+            </form>
+          ))}
+
           <form
-            key={c.id}
             onSubmit={(e) => {
               e.preventDefault();
               const form = new FormData(e.currentTarget);
               const name = String(form.get("name") ?? "");
               upsert.mutate({
-                id: c.id,
                 values: {
                   name,
                   slug: slugify(String(form.get("slug") ?? "") || name),
                   description: String(form.get("description") ?? "") || null,
-                  position: Number(form.get("position") ?? 0),
+                  position: (list.data ?? []).length,
                 },
               });
+              e.currentTarget.reset();
             }}
-            className="grid gap-3 border-b border-border/40 pb-4 sm:grid-cols-5"
+            className={`${rowGrid} items-center border-t border-border/60 p-4`}
           >
-            <Input name="name" defaultValue={c.name} placeholder="Name" />
-            <Input name="slug" defaultValue={c.slug} placeholder="Slug" />
-            <Input name="description" defaultValue={c.description ?? ""} placeholder="Description" />
-            <Input name="position" type="number" defaultValue={String(c.position)} placeholder="Position" />
-            <div className="flex gap-2">
-              <Button type="submit" size="sm" variant="outline">
-                Save
-              </Button>
-              <Button
-                type="button"
-                size="sm"
-                variant="ghost"
-                onClick={() => {
-                  if (confirm(`Delete ${c.name}?`)) remove.mutate(c.id);
-                }}
-              >
-                Delete
+            <Input name="name" placeholder="New category" required />
+            <Input name="slug" placeholder="Slug (optional)" />
+            <Input name="description" placeholder="Description" />
+            <div />
+            <div className="flex justify-end">
+              <Button type="submit" size="sm" variant="success">
+                Add category
               </Button>
             </div>
           </form>
-        ))}
-
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            const form = new FormData(e.currentTarget);
-            const name = String(form.get("name") ?? "");
-            upsert.mutate({
-              values: {
-                name,
-                slug: slugify(String(form.get("slug") ?? "") || name),
-                description: String(form.get("description") ?? "") || null,
-                position: (list.data ?? []).length,
-              },
-            });
-            e.currentTarget.reset();
-          }}
-          className="grid gap-3 sm:grid-cols-5"
-        >
-          <Input name="name" placeholder="New category" required />
-          <Input name="slug" placeholder="Slug (optional)" />
-          <Input name="description" placeholder="Description" />
-          <div />
-          <Button type="submit" size="sm" variant="outline">
-            Add category
-          </Button>
-        </form>
+        </div>
       </div>
     </div>
   );

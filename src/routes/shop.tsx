@@ -2,14 +2,19 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ProductBrowser } from "@/components/product-browser";
 import { categoriesQuery, productsQuery } from "@/lib/store";
 
-type ShopSearch = { category?: string; sort?: string; q?: string; inStock?: boolean };
+type ShopSearch = {
+  category?: string | undefined;
+  sort?: string | undefined;
+  q?: string | undefined;
+  inStock?: boolean | undefined;
+};
 
 export const Route = createFileRoute("/shop")({
   validateSearch: (search: Record<string, unknown>): ShopSearch => ({
-    category: typeof search.category === "string" ? search.category : undefined,
-    sort: typeof search.sort === "string" ? search.sort : undefined,
-    q: typeof search.q === "string" ? search.q : undefined,
-    inStock: search.inStock === true || search.inStock === "true" ? true : undefined,
+    category: typeof search['category'] === "string" ? search['category'] : undefined,
+    sort: typeof search['sort'] === "string" ? search['sort'] : undefined,
+    q: typeof search['q'] === "string" ? search['q'] : undefined,
+    inStock: search['inStock'] === true || search['inStock'] === "true" ? true : undefined,
   }),
   head: () => ({
     meta: [

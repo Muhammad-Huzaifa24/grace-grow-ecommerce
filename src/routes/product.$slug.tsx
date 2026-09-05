@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/product/$slug")({
   head: ({ loaderData }) => {
-    const product = loaderData?.product;
+    const product = (loaderData as { product?: { name: string; description: string | null } } | undefined)?.product;
     if (!product) {
       return { meta: [{ title: "Unavailable — ØRE" }, { name: "robots", content: "noindex" }] };
     }

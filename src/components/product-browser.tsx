@@ -14,10 +14,10 @@ import {
 } from "@/components/ui/select";
 
 export type BrowserSearch = {
-  category?: string;
-  sort?: string;
-  q?: string;
-  inStock?: boolean;
+  category?: string | undefined;
+  sort?: string | undefined;
+  q?: string | undefined;
+  inStock?: boolean | undefined;
 };
 
 export function ProductBrowser({
@@ -29,11 +29,11 @@ export function ProductBrowser({
   fixedCategory,
 }: {
   title: string;
-  subtitle?: string;
+  subtitle?: string | undefined;
   search: BrowserSearch;
-  routeTo?: "/shop" | "/search";
-  showFilters?: boolean;
-  fixedCategory?: string;
+  routeTo?: "/shop" | "/search" | undefined;
+  showFilters?: boolean | undefined;
+  fixedCategory?: string | undefined;
 }) {
   const navigate = useNavigate();
   const { data: products } = useSuspenseQuery(productsQuery());

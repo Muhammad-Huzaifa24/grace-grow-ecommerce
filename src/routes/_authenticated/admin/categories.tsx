@@ -20,6 +20,8 @@ export const Route = createFileRoute("/_authenticated/admin/categories")({
   component: AdminCategories,
 });
 
+const rowGrid = "grid gap-3 sm:grid-cols-[1fr_1fr_2fr_6rem_10rem]";
+
 function AdminCategories() {
   const qc = useQueryClient();
   const list = useQuery({
@@ -73,106 +75,80 @@ function AdminCategories() {
       <h1 className="text-4xl">Categories</h1>
 
       <div className="overflow-x-auto rounded-sm border border-border/60 bg-card">
-        <table className="w-full min-w-[820px] text-sm">
-          <thead className="border-b border-border/60 text-left text-xs uppercase tracking-[0.15em] text-muted-foreground">
-            <tr>
-              <th className="p-4">Name</th>
-              <th className="p-4">Slug</th>
-              <th className="p-4">Description</th>
-              <th className="w-24 p-4">Position</th>
-              <th className="p-4" />
-            </tr>
-          </thead>
-          <tbody>
-            {(list.data ?? []).map((c) => (
-              <tr key={c.id} className="border-b border-border/40 last:border-0">
-                <td colSpan={5} className="p-0">
-                  <form
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      const form = new FormData(e.currentTarget);
-                      const name = String(form.get("name") ?? "");
-                      upsert.mutate({
-                        id: c.id,
-                        values: {
-                          name,
-                          slug: slugify(String(form.get("slug") ?? "") || name),
-                          description: String(form.get("description") ?? "") || null,
-                          position: Number(form.get("position") ?? 0),
-                        },
-                      });
-                    }}
-                    className="grid grid-cols-subgrid"
-                    style={{ display: "contents" }}
-                  >
-                    <td className="p-4">
-                      <Input name="name" defaultValue={c.name} placeholder="Name" />
-                    </td>
-                    <td className="p-4">
-                      <Input name="slug" defaultValue={c.slug} placeholder="Slug" />
-                    </td>
-                    <td className="p-4">
-                      <Input name="description" defaultValue={c.description ?? ""} placeholder="Description" />
-                    </td>
-                    <td className="p-4">
-                      <Input name="position" type="number" defaultValue={String(c.position)} placeholder="Position" />
-                    </td>
-                    <td className="p-4">
-                      <div className="flex justify-end gap-2">
-                        <Button type="submit" size="sm" variant="success">
-                          Save
-                        </Button>
-                        <ConfirmButton
-                          label="Delete"
-                          title={`Delete ${c.name}?`}
-                          description="This permanently removes the category. Products in it become uncategorised."
-                          onConfirm={() => remove.mutate(c.id)}
-                        />
-                      </div>
-                    </td>
-                  </form>
-                </td>
-              </tr>
-            ))}
-            <tr>
-              <td colSpan={5} className="p-0">
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    const form = new FormData(e.currentTarget);
-                    const name = String(form.get("name") ?? "");
-                    upsert.mutate({
-                      values: {
-                        name,
-                        slug: slugify(String(form.get("slug") ?? "") || name),
-                        description: String(form.get("description") ?? "") || null,
-                        position: (list.data ?? []).length,
-                      },
-                    });
-                    e.currentTarget.reset();
-                  }}
-                  style={{ display: "contents" }}
-                >
-                  <td className="p-4">
-                    <Input name="name" placeholder="New category" required />
-                  </td>
-                  <td className="p-4">
-                    <Input name="slug" placeholder="Slug (optional)" />
-                  </td>
-                  <td className="p-4">
-                    <Input name="description" placeholder="Description" />
-                  </td>
-                  <td className="p-4" />
-                  <td className="p-4 text-right">
-                    <Button type="submit" size="sm" variant="success">
-                      Add category
-                    </Button>
-                  </td>
-                </form>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div className="min-w-[820px]">
+          <div className={`${rowGrid} border-b border-border/60 p-4 text-xs uppercase tracking-[0.15em] text-muted-foreground`}>
+            <span>Name</span>
+            <span>Slug</span>
+            <span>Description</span>
+            <span>Position</span>
+            <span className="text-right">Actions</span>
+          </div>
+
+          {(list.data ?? []).map((c) => (
+            <form
+              key={c.id}
+              onSubmit={(e) => {
+                e.preventDefault();
+                const form = new FormData(e.currentTarget);
+                const name = String(form.get("name") ?? "");
+                upsert.mutate({
+                  id: c.id,
+                  values: {
+                    name,
+                    slug: slugify(String(form.get("slug") ?? "") || name),
+                    description: String(form.get("description") ?? "") || null,
+                    position: Number(form.get("position") ?? 0),
+                  },
+                });
+              }}
+              className={`${rowGrid} items-center border-b border-border/40 p-4 last:border-0`}
+            >
+              <Input name="name" defaultValue={c.name} placeholder="Name" />
+              <Input name="slug" defaultValue={c.slug} placeholder="Slug" />
+              <Input name="description" defaultValue={c.description ?? ""} placeholder="Description" />
+              <Input name="position" type="number" defaultValue={String(c.position)} placeholder="Position" />
+              <div className="flex justify-end gap-2">
+                <Button type="submit" size="sm" variant="success">
+                  Save
+                </Button>
+                <ConfirmButton
+                  label="Delete"
+                  title={`Delete ${c.name}?`}
+                  description="This permanently removes the category. Products in it become uncategorised."
+                  onConfirm={() => remove.mutate(c.id)}
+                />
+              </div>
+            </form>
+          ))}
+
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              const form = new FormData(e.currentTarget);
+              const name = String(form.get("name") ?? "");
+              upsert.mutate({
+                values: {
+                  name,
+                  slug: slugify(String(form.get("slug") ?? "") || name),
+                  description: String(form.get("description") ?? "") || null,
+                  position: (list.data ?? []).length,
+                },
+              });
+              e.currentTarget.reset();
+            }}
+            className={`${rowGrid} items-center border-t border-border/60 p-4`}
+          >
+            <Input name="name" placeholder="New category" required />
+            <Input name="slug" placeholder="Slug (optional)" />
+            <Input name="description" placeholder="Description" />
+            <div />
+            <div className="flex justify-end">
+              <Button type="submit" size="sm" variant="success">
+                Add category
+              </Button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );

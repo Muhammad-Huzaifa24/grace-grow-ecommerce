@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import type { TablesInsert, TablesUpdate } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
+import { ConfirmButton } from "@/components/confirm-button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 
@@ -107,12 +108,15 @@ function AdminBanners() {
                 />
                 Active
               </div>
-              <Button type="submit" size="sm" variant="outline">
+              <Button type="submit" size="sm" variant="success">
                 Save
               </Button>
-              <Button type="button" size="sm" variant="ghost" onClick={() => remove.mutate(b.id)}>
-                Delete
-              </Button>
+              <ConfirmButton
+                label="Delete"
+                title={`Delete banner “${b.title}”?`}
+                description="This permanently removes the banner from the homepage."
+                onConfirm={() => remove.mutate(b.id)}
+              />
             </div>
           </form>
         ))}

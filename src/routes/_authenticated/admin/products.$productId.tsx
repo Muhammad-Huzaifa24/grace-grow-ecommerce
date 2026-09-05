@@ -3,6 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import type { TablesInsert, TablesUpdate } from "@/integrations/supabase/types";
 import { slugify } from "@/lib/admin";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -127,14 +128,14 @@ function EditProduct() {
   });
 
   const saveVariant = useMutation({
-    mutationFn: async (v: { id?: string; values: Record<string, unknown> }) => {
+    mutationFn: async (v: { id?: string; values: TablesUpdate<"product_variants"> }) => {
       if (v.id) {
         const { error } = await supabase.from("product_variants").update(v.values).eq("id", v.id);
         if (error) throw error;
       } else {
         const { error } = await supabase
           .from("product_variants")
-          .insert({ product_id: productId, ...(v.values as { name: string }) });
+          .insert({ product_id: productId, ...(v.values as TablesInsert<"product_variants">) });
         if (error) throw error;
       }
     },

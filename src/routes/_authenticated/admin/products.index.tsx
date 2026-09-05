@@ -3,6 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import type { TablesUpdate } from "@/integrations/supabase/types";
 import { formatPrice } from "@/lib/store";
 import { slugify } from "@/lib/admin";
 import { Button } from "@/components/ui/button";
@@ -73,7 +74,7 @@ function AdminProducts() {
   });
 
   const toggle = useMutation({
-    mutationFn: async (v: { id: string; patch: Record<string, boolean> }) => {
+    mutationFn: async (v: { id: string; patch: TablesUpdate<"products"> }) => {
       const { error } = await supabase.from("products").update(v.patch).eq("id", v.id);
       if (error) throw error;
     },

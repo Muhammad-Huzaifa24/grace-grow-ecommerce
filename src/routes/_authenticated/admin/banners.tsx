@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import type { TablesInsert, TablesUpdate } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
@@ -38,12 +39,12 @@ function AdminBanners() {
   };
 
   const upsert = useMutation({
-    mutationFn: async (v: { id?: string; values: Record<string, unknown> }) => {
+    mutationFn: async (v: { id?: string; values: TablesUpdate<"banners"> & { title?: string } }) => {
       if (v.id) {
         const { error } = await supabase.from("banners").update(v.values).eq("id", v.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("banners").insert(v.values as { title: string });
+        const { error } = await supabase.from("banners").insert(v.values as TablesInsert<"banners">);
         if (error) throw error;
       }
     },
